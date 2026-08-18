@@ -9,12 +9,6 @@
       "description": "妖怪を退治し、封印せよ"
     },
     {
-      "id": "92080dc3-fdfa-4d31-9777-8e57bbb75ba4",
-      "name": "魔城騎士",
-      "url": "https://men475518-oss.github.io/makai/",
-      "description": "魔界を冒険する"
-    },
-    {
       "id": "1668d95e-13f3-4d57-8dee-2fbb20acfc84",
       "name": "青春カウントダウン",
       "url": "https://men475518-oss.github.io/seisyun/",
@@ -31,6 +25,12 @@
       "name": "深夜病棟",
       "url": "https://men475518-oss.github.io/byoto/",
       "description": "廃病院から脱出せよ"
+    },
+    {
+      "id": "92080dc3-fdfa-4d31-9777-8e57bbb75ba4",
+      "name": "魔城騎士",
+      "url": "https://men475518-oss.github.io/makai/",
+      "description": "魔界を冒険する"
     },
     {
       "id": "0ecce415-de75-447d-9e0f-76dfb741b8b1",
