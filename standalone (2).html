@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>つくったゲーム</title>
+<style>
+:root {
+  --bg: #f6f7fb;
+  --surface: #ffffff;
+  --surface-2: #eef0f6;
+  --text: #14161c;
+  --muted: #5c6373;
+  --border: #dfe2ea;
+  --accent: #3b5bfd;
+  --accent-text: #ffffff;
+  --danger: #d13b3b;
+  --radius: 14px;
+  --shadow: 0 1px 2px rgba(16, 20, 40, .06), 0 6px 16px rgba(16, 20, 40, .06);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1116;
+    --surface: #191c24;
+    --surface-2: #232733;
+    --text: #eef0f6;
+    --muted: #a2a9bb;
+    --border: #2c3140;
+    --accent: #7d92ff;
+    --accent-text: #0f1116;
+    --danger: #ff7b7b;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 6px 16px rgba(0, 0, 0, .3);
+  }
+}
+
+* { box-sizing: border-box; }
+
+/* display を指定した要素でも hidden 属性を効かせる */
+[hidden] { display: none !important; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- header ---------- */
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding-top: env(safe-area-inset-top);
+}
+
+.header-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.titles { min-width: 0; flex: 1; }
+
+.header h1 {
+  margin: 0;
+  font-size: 1.25rem;
+  letter-spacing: .01em;
+  overflow-wrap: anywhere;
+}
+
+.header p {
+  margin: 2px 0 0;
+  font-size: .82rem;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.icon-btn {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.icon-btn:active { background: var(--surface-2); }
+
+/* ---------- layout ---------- */
+
+.main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px 16px 24px;
+}
+
+.status {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: .85rem;
+  color: var(--muted);
+}
+
+.status:empty { display: none; }
+.status.error { color: var(--danger); border-color: var(--danger); }
+
+.search-wrap { margin-bottom: 14px; }
+
+#search {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 14px;
+  font-size: 16px; /* iOS でのズームを防ぐ */
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+#search:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+/* ---------- list ---------- */
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 12px 14px;
+}
+
+.card-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.card-info { min-width: 0; flex: 1; }
+
+.card-name {
+  display: block;
+  font-weight: 700;
+  font-size: 1.02rem;
+  overflow-wrap: anywhere;
+}
+
+.card-desc {
+  display: block;
+  margin-top: 2px;
+  font-size: .82rem;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.card-host {
+  display: block;
+  margin-top: 2px;
+  font-size: .72rem;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.play {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-weight: 700;
+  font-size: .9rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.play:active { filter: brightness(.92); }
+
+.card-ops {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+}
+
+.op {
+  min-width: 44px;
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: .85rem;
+  cursor: pointer;
+}
+
+.op:disabled { opacity: .35; }
+.op.danger { color: var(--danger); }
+.op.spacer { margin-left: auto; border: none; background: none; pointer-events: none; }
+
+.empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 32px 0;
+}
+
+/* ---------- owner bar ---------- */
+
+.owner-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  gap: 10px;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: saturate(180%) blur(12px);
+  border-top: 1px solid var(--border);
+}
+
+.owner-bar .btn { flex: 1; }
+
+/* ---------- buttons ---------- */
+
+.btn {
+  min-height: 46px;
+  padding: 0 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: .95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn.primary {
+  background: var(--accent);
+  color: var(--accent-text);
+  border-color: transparent;
+}
+
+.btn.danger { color: var(--danger); }
+.btn:disabled { opacity: .5; }
+.btn:active { filter: brightness(.94); }
+
+/* ---------- dialog ---------- */
+
+.dlg {
+  width: min(560px, calc(100% - 24px));
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+
+.dlg::backdrop { background: rgba(0, 0, 0, .45); }
+
+.dlg form { padding: 18px 18px calc(18px + env(safe-area-inset-bottom)); }
+
+.dlg h2 { margin: 0 0 12px; font-size: 1.1rem; }
+
+.dlg label {
+  display: block;
+  margin: 12px 0 4px;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.dlg input,
+.dlg textarea {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 16px;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.dlg input:focus-visible,
+.dlg textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.req {
+  font-weight: 500;
+  font-size: .7rem;
+  color: var(--danger);
+}
+
+.hint {
+  margin: 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+
+.adv { margin-top: 14px; }
+.adv summary { font-size: .85rem; color: var(--muted); cursor: pointer; }
+
+.form-error {
+  margin: 12px 0 0;
+  color: var(--danger);
+  font-size: .85rem;
+}
+
+.dlg-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.dlg-actions .btn { flex: 1; min-width: 110px; }
+
+/* ---------- footer ---------- */
+
+.footer {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 16px 24px;
+  font-size: .75rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* 編集バーの下に内容が隠れないよう余白をとる */
+body.is-owner .footer { padding-bottom: calc(88px + env(safe-area-inset-bottom)); }
+</style>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="titles">
+      <h1 id="site-title">つくったゲーム</h1>
+      <p id="site-subtitle"></p>
+    </div>
+    <button id="btn-settings" class="icon-btn" type="button" aria-label="設定">⚙️</button>
+  </div>
+</header>
+
+<main class="main">
+  <!-- assets が読み込めなかったときに、無反応にならないよう知らせる -->
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+
+  <div id="search-wrap" class="search-wrap">
+    <input id="search" type="search" placeholder="ゲームを検索" autocomplete="off" aria-label="ゲームを検索">
+  </div>
+
+  <ul id="list" class="list"></ul>
+
+  <p id="empty" class="empty" hidden>まだゲームが登録されていません。</p>
+
+  <div id="owner-bar" class="owner-bar" hidden>
+    <button id="btn-add" class="btn primary" type="button">＋ ゲームを追加</button>
+    <button id="btn-publish" class="btn" type="button">GitHub に保存</button>
+  </div>
+</main>
+
+<footer class="footer">
+  <span id="footer-note"></span>
+</footer>
+
+<!-- ゲーム編集ダイアログ -->
+<dialog id="dlg-game" class="dlg">
+  <form id="form-game" method="dialog">
+    <h2 id="dlg-game-title">ゲームを追加</h2>
+    <label for="f-name">ゲーム名 <span class="req">必須</span></label>
+    <input id="f-name" name="name" type="text" required maxlength="120" placeholder="例：ぷよぷよもどき">
+
+    <label for="f-url">リンク（URL） <span class="req">必須</span></label>
+    <input id="f-url" name="url" type="url" required inputmode="url" placeholder="https://...">
+
+    <label for="f-desc">説明（任意）</label>
+    <textarea id="f-desc" name="description" rows="2" maxlength="300" placeholder="かんたんな説明"></textarea>
+
+    <p id="form-error" class="form-error" hidden></p>
+
+    <div class="dlg-actions">
+      <button value="cancel" class="btn" type="submit" formnovalidate>キャンセル</button>
+      <button id="btn-save-game" value="ok" class="btn primary" type="submit">保存</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- 設定ダイアログ -->
+<dialog id="dlg-settings" class="dlg">
+  <form id="form-settings" method="dialog">
+    <h2>設定（本人用）</h2>
+    <p class="hint">
+      GitHub のアクセストークンを入れると、このスマホから一覧を編集・保存できるようになります。
+      トークンはこの端末の中だけに保存され、どこにも送信されません（GitHub 本体を除く）。
+    </p>
+
+    <label for="f-token">GitHub アクセストークン</label>
+    <input id="f-token" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_... / ghp_...">
+
+    <details id="adv-repo" class="adv">
+      <summary>保存先のリポジトリ設定</summary>
+      <label for="f-owner">オーナー名</label>
+      <input id="f-owner" type="text" autocomplete="off" spellcheck="false" placeholder="your-name">
+      <label for="f-repo">リポジトリ名</label>
+      <input id="f-repo" type="text" autocomplete="off" spellcheck="false" placeholder="your-repo">
+      <label for="f-branch">ブランチ</label>
+      <input id="f-branch" type="text" autocomplete="off" spellcheck="false" placeholder="main">
+    </details>
+
+    <label for="f-site-title">サイトのタイトル</label>
+    <input id="f-site-title" type="text" maxlength="60" placeholder="つくったゲーム">
+    <label for="f-site-subtitle">サイトの説明</label>
+    <input id="f-site-subtitle" type="text" maxlength="120" placeholder="これまでに作ったゲームの一覧です">
+
+    <div class="dlg-actions">
+      <button value="cancel" class="btn" type="submit" formnovalidate>閉じる</button>
+      <button id="btn-logout" value="logout" class="btn danger" type="submit" formnovalidate>編集を終了</button>
+      <button value="ok" class="btn primary" type="submit">適用</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+'use strict';
+
+/**
+ * つくったゲーム一覧サイト
+ *
+ * - 一覧データは games.json（誰でも閲覧できる）
+ * - 編集モードは GitHub のアクセストークンを持っている本人だけ
+ *   トークンは端末の localStorage にだけ保存され、送信先は GitHub API のみ
+ */
+
+const DATA_PATH = 'games.json';
+const LS_TOKEN = 'gamelist.token';
+const LS_CONFIG = 'gamelist.config';
+const LS_DRAFT = 'gamelist.draft';
+
+const state = {
+  data: { title: 'つくったゲーム', subtitle: '', games: [] },
+  config: { owner: '', repo: '', branch: 'main' },
+  token: '',
+  dirty: false,
+  filter: '',
+  editingId: null,
+  verifying: false,
+};
+
+const el = {
+  title: document.getElementById('site-title'),
+  subtitle: document.getElementById('site-subtitle'),
+  status: document.getElementById('status'),
+  list: document.getElementById('list'),
+  empty: document.getElementById('empty'),
+  search: document.getElementById('search'),
+  searchWrap: document.getElementById('search-wrap'),
+  ownerBar: document.getElementById('owner-bar'),
+  footerNote: document.getElementById('footer-note'),
+  btnSettings: document.getElementById('btn-settings'),
+  btnAdd: document.getElementById('btn-add'),
+  btnPublish: document.getElementById('btn-publish'),
+  dlgGame: document.getElementById('dlg-game'),
+  formGame: document.getElementById('form-game'),
+  dlgGameTitle: document.getElementById('dlg-game-title'),
+  fName: document.getElementById('f-name'),
+  fUrl: document.getElementById('f-url'),
+  fDesc: document.getElementById('f-desc'),
+  formError: document.getElementById('form-error'),
+  dlgSettings: document.getElementById('dlg-settings'),
+  formSettings: document.getElementById('form-settings'),
+  fToken: document.getElementById('f-token'),
+  fOwner: document.getElementById('f-owner'),
+  fRepo: document.getElementById('f-repo'),
+  fBranch: document.getElementById('f-branch'),
+  fSiteTitle: document.getElementById('f-site-title'),
+  fSiteSubtitle: document.getElementById('f-site-subtitle'),
+  advRepo: document.getElementById('adv-repo'),
+};
+
+/* ------------------------------------------------------------------ */
+/* ユーティリティ                                                       */
+/* ------------------------------------------------------------------ */
+
+function setStatus(message, isError) {
+  el.status.textContent = message || '';
+  el.status.classList.toggle('error', Boolean(isError));
+}
+
+function newId() {
+  if (window.crypto && typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+  return 'g-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+}
+
+/** http/https に解決できる URL だけを通す（javascript: などを弾く） */
+function resolveUrl(raw) {
+  const value = String(raw || '').trim();
+  if (!value) return null;
+  let url;
+  try {
+    url = new URL(value, document.baseURI);
+  } catch {
+    return null;
+  }
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') return null;
+  return url;
+}
+
+function displayLocation(url) {
+  if (url.origin === location.origin) {
+    return url.pathname.replace(/^\//, '') || url.hostname;
+  }
+  return url.hostname.replace(/^www\./, '');
+}
+
+function utf8ToBase64(str) {
+  const bytes = new TextEncoder().encode(str);
+  let binary = '';
+  for (let i = 0; i < bytes.length; i += 1) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary);
+}
+
+function normalizeData(raw) {
+  const source = raw && typeof raw === 'object' ? raw : {};
+  const games = Array.isArray(source.games) ? source.games : [];
+  return {
+    title: typeof source.title === 'string' && source.title ? source.title : 'つくったゲーム',
+    subtitle: typeof source.subtitle === 'string' ? source.subtitle : '',
+    games: games
+      .filter((g) => g && typeof g === 'object')
+      .map((g) => ({
+        id: typeof g.id === 'string' && g.id ? g.id : newId(),
+        name: String(g.name || '').slice(0, 120),
+        url: String(g.url || '').slice(0, 2000),
+        description: String(g.description || '').slice(0, 300),
+      })),
+  };
+}
+
+/* ------------------------------------------------------------------ */
+/* 保存された設定                                                       */
+/* ------------------------------------------------------------------ */
+
+function detectRepo() {
+  // user.github.io/repo/ → owner=user, repo=repo
+  // user.github.io/      → owner=user, repo=user.github.io
+  const host = location.hostname;
+  if (!host.endsWith('.github.io')) return null;
+  const owner = host.slice(0, -'.github.io'.length);
+  const segment = location.pathname.split('/').filter(Boolean)[0];
+  return { owner, repo: segment || host, branch: 'main' };
+}
+
+function loadLocalState() {
+  try {
+    state.token = localStorage.getItem(LS_TOKEN) || '';
+  } catch {
+    state.token = '';
+  }
+
+  let stored = null;
+  try {
+    stored = JSON.parse(localStorage.getItem(LS_CONFIG) || 'null');
+  } catch {
+    stored = null;
+  }
+  const detected = detectRepo();
+  state.config = {
+    owner: (stored && stored.owner) || (detected && detected.owner) || '',
+    repo: (stored && stored.repo) || (detected && detected.repo) || '',
+    branch: (stored && stored.branch) || 'main',
+  };
+}
+
+function saveConfig() {
+  try {
+    localStorage.setItem(LS_CONFIG, JSON.stringify(state.config));
+  } catch { /* プライベートモードなどでは保存できない */ }
+}
+
+function saveDraft() {
+  try {
+    if (state.dirty) {
+      localStorage.setItem(LS_DRAFT, JSON.stringify(state.data));
+    } else {
+      localStorage.removeItem(LS_DRAFT);
+    }
+  } catch { /* 保存できなくても編集自体は続けられる */ }
+}
+
+function readDraft() {
+  try {
+    const raw = localStorage.getItem(LS_DRAFT);
+    return raw ? normalizeData(JSON.parse(raw)) : null;
+  } catch {
+    return null;
+  }
+}
+
+function isOwnerMode() {
+  // 確認が終わるまでは編集モードに入らない（編集バーが一瞬出るのを防ぐ）
+  return Boolean(state.token) && !state.verifying;
+}
+
+/* ------------------------------------------------------------------ */
+/* 描画                                                                */
+/* ------------------------------------------------------------------ */
+
+function render() {
+  document.title = state.data.title;
+  el.title.textContent = state.data.title;
+  el.subtitle.textContent = state.data.subtitle;
+  el.subtitle.hidden = !state.data.subtitle;
+
+  const owner = isOwnerMode();
+  el.ownerBar.hidden = !owner;
+  document.body.classList.toggle('is-owner', owner);
+  el.btnPublish.disabled = !state.dirty;
+  el.btnPublish.textContent = state.dirty ? 'GitHub に保存（未保存あり）' : 'GitHub に保存';
+
+  const games = state.data.games;
+  const keyword = state.filter.trim().toLowerCase();
+  const visible = keyword
+    ? games.filter((g) => (g.name + ' ' + g.description).toLowerCase().includes(keyword))
+    : games;
+
+  el.searchWrap.hidden = games.length < 5;
+  el.list.textContent = '';
+
+  visible.forEach((game) => {
+    el.list.appendChild(renderCard(game, games.indexOf(game), games.length, owner));
+  });
+
+  if (games.length === 0) {
+    el.empty.hidden = false;
+    el.empty.textContent = owner
+      ? 'まだゲームがありません。「＋ ゲームを追加」から登録してください。'
+      : 'まだゲームが登録されていません。';
+  } else if (visible.length === 0) {
+    el.empty.hidden = false;
+    el.empty.textContent = '「' + state.filter + '」に一致するゲームはありません。';
+  } else {
+    el.empty.hidden = true;
+  }
+
+  el.footerNote.textContent = games.length ? games.length + ' 本のゲーム' : '';
+}
+
+function renderCard(game, index, total, owner) {
+  const li = document.createElement('li');
+  li.className = 'card';
+
+  const row = document.createElement('div');
+  row.className = 'card-row';
+
+  const info = document.createElement('div');
+  info.className = 'card-info';
+
+  const name = document.createElement('span');
+  name.className = 'card-name';
+  name.textContent = game.name || '(名前なし)';
+  info.appendChild(name);
+
+  if (game.description) {
+    const desc = document.createElement('span');
+    desc.className = 'card-desc';
+    desc.textContent = game.description;
+    info.appendChild(desc);
+  }
+
+  const url = resolveUrl(game.url);
+
+  if (url) {
+    const host = document.createElement('span');
+    host.className = 'card-host';
+    host.textContent = displayLocation(url);
+    info.appendChild(host);
+  }
+
+  row.appendChild(info);
+
+  if (url) {
+    const link = document.createElement('a');
+    link.className = 'play';
+    link.href = game.url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.textContent = 'あそぶ →';
+    link.setAttribute('aria-label', (game.name || 'ゲーム') + ' をあそぶ');
+    row.appendChild(link);
+  } else {
+    const broken = document.createElement('span');
+    broken.className = 'card-host';
+    broken.textContent = 'リンクが正しくありません';
+    info.appendChild(broken);
+  }
+
+  li.appendChild(row);
+
+  if (owner) {
+    const ops = document.createElement('div');
+    ops.className = 'card-ops';
+    ops.appendChild(opButton('↑', '上に移動', index === 0, () => moveGame(index, -1)));
+    ops.appendChild(opButton('↓', '下に移動', index === total - 1, () => moveGame(index, 1)));
+    const spacer = document.createElement('span');
+    spacer.className = 'op spacer';
+    ops.appendChild(spacer);
+    ops.appendChild(opButton('編集', '編集', false, () => openGameDialog(game.id)));
+    const del = opButton('削除', '削除', false, () => deleteGame(game.id));
+    del.classList.add('danger');
+    ops.appendChild(del);
+    li.appendChild(ops);
+  }
+
+  return li;
+}
+
+function opButton(label, ariaLabel, disabled, onClick) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'op';
+  button.textContent = label;
+  button.setAttribute('aria-label', ariaLabel);
+  button.disabled = disabled;
+  button.addEventListener('click', onClick);
+  return button;
+}
+
+/* ------------------------------------------------------------------ */
+/* 編集操作                                                            */
+/* ------------------------------------------------------------------ */
+
+function markDirty() {
+  state.dirty = true;
+  saveDraft();
+  render();
+}
+
+function moveGame(index, delta) {
+  const target = index + delta;
+  const games = state.data.games;
+  if (target < 0 || target >= games.length) return;
+  [games[index], games[target]] = [games[target], games[index]];
+  markDirty();
+}
+
+function deleteGame(id) {
+  const game = state.data.games.find((g) => g.id === id);
+  if (!game) return;
+  if (!confirm('「' + (game.name || '名前なし') + '」を削除しますか？')) return;
+  state.data.games = state.data.games.filter((g) => g.id !== id);
+  markDirty();
+}
+
+function openGameDialog(id) {
+  state.editingId = id || null;
+  const game = id ? state.data.games.find((g) => g.id === id) : null;
+  el.dlgGameTitle.textContent = game ? 'ゲームを編集' : 'ゲームを追加';
+  el.fName.value = game ? game.name : '';
+  el.fUrl.value = game ? game.url : '';
+  el.fDesc.value = game ? game.description : '';
+  el.formError.hidden = true;
+  el.dlgGame.showModal();
+}
+
+function submitGameDialog(event) {
+  // ダイアログを閉じるボタン（キャンセル）はそのまま通す
+  if (submitAction(event) !== 'ok') return;
+
+  const name = el.fName.value.trim();
+  const rawUrl = el.fUrl.value.trim();
+  const description = el.fDesc.value.trim();
+
+  if (!name || !rawUrl) {
+    showFormError('ゲーム名とリンクは必須です。');
+    event.preventDefault();
+    return;
+  }
+  if (!resolveUrl(rawUrl)) {
+    showFormError('リンクは http:// または https:// で始まる URL を入力してください。');
+    event.preventDefault();
+    return;
+  }
+
+  if (state.editingId) {
+    const game = state.data.games.find((g) => g.id === state.editingId);
+    if (game) Object.assign(game, { name, url: rawUrl, description });
+  } else {
+    state.data.games.push({ id: newId(), name, url: rawUrl, description });
+  }
+  state.editingId = null;
+  markDirty();
+}
+
+/** event.submitter 未対応のブラウザ向けに、最後に押した送信ボタンを覚えておく */
+const lastSubmitter = new WeakMap();
+
+function trackSubmitters(form) {
+  form.querySelectorAll('button[type="submit"]').forEach((button) => {
+    button.addEventListener('click', () => lastSubmitter.set(form, button.value));
+  });
+}
+
+function submitAction(event) {
+  if (event.submitter) return event.submitter.value;
+  return lastSubmitter.get(event.currentTarget) || '';
+}
+
+function showFormError(message) {
+  el.formError.textContent = message;
+  el.formError.hidden = false;
+}
+
+/* ------------------------------------------------------------------ */
+/* 設定ダイアログ                                                      */
+/* ------------------------------------------------------------------ */
+
+function openSettings() {
+  el.fToken.value = state.token;
+  el.fOwner.value = state.config.owner;
+  el.fRepo.value = state.config.repo;
+  el.fBranch.value = state.config.branch;
+  el.fSiteTitle.value = state.data.title;
+  el.fSiteSubtitle.value = state.data.subtitle;
+  // リポジトリを自動判別できていないときは、最初から開いておく
+  el.advRepo.open = !state.config.owner || !state.config.repo;
+  el.dlgSettings.showModal();
+}
+
+function submitSettings(event) {
+  const action = submitAction(event);
+
+  if (action === 'logout') {
+    if (state.dirty && !confirm('未保存の変更があります。編集を終了しますか？')) {
+      event.preventDefault();
+      return;
+    }
+    clearToken();
+    setStatus('編集モードを終了しました。');
+    render();
+    return;
+  }
+
+  if (action !== 'ok') return;
+
+  state.token = el.fToken.value.trim();
+  state.config = {
+    owner: el.fOwner.value.trim(),
+    repo: el.fRepo.value.trim(),
+    branch: el.fBranch.value.trim() || 'main',
+  };
+  try {
+    if (state.token) localStorage.setItem(LS_TOKEN, state.token);
+    else localStorage.removeItem(LS_TOKEN);
+  } catch { /* noop */ }
+  saveConfig();
+
+  const title = el.fSiteTitle.value.trim() || 'つくったゲーム';
+  const subtitle = el.fSiteSubtitle.value.trim();
+  if (title !== state.data.title || subtitle !== state.data.subtitle) {
+    state.data.title = title;
+    state.data.subtitle = subtitle;
+    markDirty();
+  }
+
+  state.verifying = Boolean(state.token);
+  render();
+  if (state.token) verifyToken();
+  else setStatus('');
+}
+
+/** 端末からトークンを消す */
+function clearToken() {
+  state.token = '';
+  try {
+    localStorage.removeItem(LS_TOKEN);
+  } catch { /* noop */ }
+}
+
+/**
+ * 入力されたトークンが、本当にこのリポジトリを編集できるものか GitHub に確認する。
+ * 編集できないトークン（他人のものなど）はここで破棄し、編集モードに入れない。
+ * ※これは分かりやすさのための確認で、実際の保護は GitHub 側の権限チェック。
+ */
+async function verifyToken() {
+  const { owner, repo } = state.config;
+  if (!owner || !repo) {
+    state.verifying = false;
+    setStatus('保存先のリポジトリが未設定です。設定を開いて入力してください。', true);
+    render();
+    return;
+  }
+
+  setStatus('トークンを確認しています…');
+  try {
+    const response = await fetch(
+      'https://api.github.com/repos/' + encodeURIComponent(owner) + '/' + encodeURIComponent(repo),
+      { headers: githubHeaders() }
+    );
+    if (!response.ok) throw new Error(await githubError(response));
+
+    const info = await response.json();
+    if (!info.permissions || !info.permissions.push) {
+      clearToken();
+      setStatus('このトークンでは ' + owner + '/' + repo + ' を編集できません。'
+        + 'リポジトリの持ち主本人のトークンを入れてください。', true);
+    } else {
+      setStatus('編集モードになりました。');
+    }
+  } catch (error) {
+    clearToken();
+    setStatus(error.message || 'トークンを確認できませんでした。', true);
+  }
+  state.verifying = false;
+  render();
+}
+
+/* ------------------------------------------------------------------ */
+/* データの読み込み / GitHub への保存                                   */
+/* ------------------------------------------------------------------ */
+
+/** ファイルを直接開いたときに中身が見えるよう、見本として表示するデータ */
+const PREVIEW_DATA = {
+  title: 'つくったゲーム',
+  subtitle: 'これまでに作ったゲームの一覧です',
+  games: [
+    { id: 'preview-1', name: 'サンプルゲーム', url: 'https://example.com/', description: '表示の見本です' },
+  ],
+};
+
+async function loadData() {
+  try {
+    const response = await fetch(DATA_PATH + '?t=' + Date.now(), { cache: 'no-store' });
+    if (!response.ok) throw new Error('HTTP ' + response.status);
+    state.data = normalizeData(await response.json());
+  } catch (error) {
+    if (location.protocol === 'file:') {
+      // file:// では games.json を読めないので、見本を出して表示だけ確認できるようにする
+      state.data = normalizeData(PREVIEW_DATA);
+      setStatus('ファイルを直接開いているため、games.json を読み込めません。いまは表示の見本です。'
+        + 'GitHub Pages で公開すると本物の一覧が表示されます。');
+    } else {
+      setStatus('一覧の読み込みに失敗しました（' + error.message + '）', true);
+    }
+  }
+
+  const draft = readDraft();
+  if (draft) {
+    state.data = draft;
+    state.dirty = true;
+    setStatus('未保存の変更がこの端末に残っています。「GitHub に保存」で反映してください。');
+  }
+  render();
+}
+
+function githubHeaders() {
+  return {
+    Authorization: 'Bearer ' + state.token,
+    Accept: 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28',
+    'Content-Type': 'application/json',
+  };
+}
+
+async function githubError(response) {
+  let detail = '';
+  try {
+    const body = await response.json();
+    detail = body && body.message ? body.message : '';
+  } catch { /* 本文が JSON でない場合もある */ }
+
+  if (response.status === 401) return 'トークンが無効です。設定から入れ直してください。';
+  if (response.status === 403) return 'このリポジトリへの書き込み権限がありません。' + (detail ? '（' + detail + '）' : '');
+  if (response.status === 404) return 'リポジトリまたはブランチが見つかりません。設定を確認してください。';
+  if (response.status === 409) return '別の場所で更新されています。ページを再読み込みしてからもう一度お試しください。';
+  return 'GitHub エラー: ' + response.status + (detail ? ' ' + detail : '');
+}
+
+async function publish() {
+  if (!isOwnerMode()) return;
+  const { owner, repo, branch } = state.config;
+  if (!owner || !repo) {
+    setStatus('保存先のリポジトリが未設定です。設定を開いて入力してください。', true);
+    openSettings();
+    return;
+  }
+
+  el.btnPublish.disabled = true;
+  setStatus('保存しています…');
+
+  const base = 'https://api.github.com/repos/' + encodeURIComponent(owner) +
+    '/' + encodeURIComponent(repo) + '/contents/' + DATA_PATH;
+
+  try {
+    // 現在の sha を取得（ファイルが無ければ新規作成）
+    let sha;
+    const head = await fetch(base + '?ref=' + encodeURIComponent(branch), { headers: githubHeaders() });
+    if (head.ok) {
+      sha = (await head.json()).sha;
+    } else if (head.status !== 404) {
+      throw new Error(await githubError(head));
+    }
+
+    const payload = {
+      message: 'Update game list',
+      content: utf8ToBase64(JSON.stringify(state.data, null, 2) + '\n'),
+      branch,
+    };
+    if (sha) payload.sha = sha;
+
+    const response = await fetch(base, {
+      method: 'PUT',
+      headers: githubHeaders(),
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) throw new Error(await githubError(response));
+
+    state.dirty = false;
+    saveDraft();
+    setStatus('保存しました。公開ページへの反映まで 1 分ほどかかることがあります。');
+  } catch (error) {
+    setStatus(error.message || '保存に失敗しました。', true);
+  } finally {
+    render();
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* 起動                                                                */
+/* ------------------------------------------------------------------ */
+
+el.btnSettings.addEventListener('click', openSettings);
+el.btnAdd.addEventListener('click', () => openGameDialog(null));
+el.btnPublish.addEventListener('click', publish);
+el.formGame.addEventListener('submit', submitGameDialog);
+el.formSettings.addEventListener('submit', submitSettings);
+trackSubmitters(el.formGame);
+trackSubmitters(el.formSettings);
+el.search.addEventListener('input', () => {
+  state.filter = el.search.value;
+  render();
+});
+
+window.addEventListener('beforeunload', (event) => {
+  if (!state.dirty) return;
+  event.preventDefault();
+  event.returnValue = '';
+});
+
+loadLocalState();
+loadData();
+</script>
+</body>
+</html>
