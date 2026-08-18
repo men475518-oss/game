@@ -15,16 +15,16 @@
       "description": "魔界を冒険する"
     },
     {
-      "id": "b99a1e7e-3ec7-4130-9990-78420af62d48",
-      "name": "とびら-ちいさな旅-",
-      "url": "https://men475518-oss.github.io/door/",
-      "description": "扉を通じて小さな旅をする　3D"
-    },
-    {
       "id": "1668d95e-13f3-4d57-8dee-2fbb20acfc84",
       "name": "青春カウントダウン",
       "url": "https://men475518-oss.github.io/seisyun/",
       "description": "144週つまり高校3年間生活を送るゲーム。勉強や部活、恋愛などを楽しもう"
+    },
+    {
+      "id": "b99a1e7e-3ec7-4130-9990-78420af62d48",
+      "name": "とびら-ちいさな旅-",
+      "url": "https://men475518-oss.github.io/door/",
+      "description": "扉を通じて小さな旅をする　3D"
     },
     {
       "id": "0ecce415-de75-447d-9e0f-76dfb741b8b1",
